@@ -14,6 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookController = void 0;
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
+const pagination_1 = require("../../../shared/pagination");
+const pick_1 = __importDefault(require("../../../shared/pick"));
+const book_constant_1 = require("./book.constant");
 const book_service_1 = require("./book.service");
 const create = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const book = yield book_service_1.BookService.create(req.body);
@@ -25,12 +28,28 @@ const create = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0,
     });
 }));
 const getAll = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const books = yield book_service_1.BookService.getAll();
+    const filterOptions = (0, pick_1.default)(req.query, book_constant_1.bookFilterableFields);
+    const paginationOptions = (0, pick_1.default)(req.query, pagination_1.paginationHelpers.paginationFields);
+    const books = yield book_service_1.BookService.getAll(filterOptions, paginationOptions);
     res.status(200).json({
         success: true,
         statusCode: 200,
         message: "Books retrieved successfully",
-        data: books,
+        meta: books.meta,
+        data: books.data,
+    });
+}));
+const getAllByCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const categoryId = req.params.categoryId;
+    const filterOptions = (0, pick_1.default)(req.query, book_constant_1.bookFilterableFields);
+    const paginationOptions = (0, pick_1.default)(req.query, pagination_1.paginationHelpers.paginationFields);
+    const books = yield book_service_1.BookService.getAllByCategory(categoryId, filterOptions, paginationOptions);
+    res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "Books retrieved successfully",
+        meta: books.meta,
+        data: books.data,
     });
 }));
 const getOne = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -63,6 +82,7 @@ const remove = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0,
 exports.BookController = {
     create,
     getAll,
+    getAllByCategory,
     getOne,
     update,
     remove,

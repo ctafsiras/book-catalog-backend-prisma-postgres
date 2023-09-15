@@ -24,6 +24,15 @@ const create = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0,
         data: user,
     });
 }));
+const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const token = yield user_service_1.UserService.login(req.body);
+    res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "User logged in successfully",
+        token,
+    });
+}));
 const getAll = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield user_service_1.UserService.getAll();
     res.status(200).json({
@@ -60,10 +69,21 @@ const remove = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0,
         data: user,
     });
 }));
+const getProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_service_1.UserService.getOne(req.user.userId);
+    res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "User retrieved successfully",
+        data: user,
+    });
+}));
 exports.UserController = {
     create,
+    login,
     getAll,
     getOne,
     update,
     remove,
+    getProfile,
 };

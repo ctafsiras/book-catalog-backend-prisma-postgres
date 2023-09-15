@@ -25,7 +25,7 @@ const create = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0,
     });
 }));
 const getAll = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const orders = yield order_service_1.OrderService.getAll();
+    const orders = yield order_service_1.OrderService.getAll(req.user);
     res.status(200).json({
         success: true,
         statusCode: 200,
@@ -34,7 +34,7 @@ const getAll = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0,
     });
 }));
 const getOne = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const order = yield order_service_1.OrderService.getOne(req.params.id);
+    const order = yield order_service_1.OrderService.getOne(req.params.id, req.user);
     res.status(200).json({
         success: true,
         statusCode: 200,

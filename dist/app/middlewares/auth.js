@@ -8,20 +8,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = __importDefault(require("./app"));
-const port = Number(process.env.PORT) | 5000;
-const main = () => __awaiter(void 0, void 0, void 0, function* () {
+const jwt_1 = require("../../shared/jwt");
+const auth = (...requiredRoles) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        app_1.default.listen(port, () => {
-            console.log(`Example app listening on port ${port}`);
-        });
+        //get authorization token
+        const token = req.headers.authorization;
+        if (!token) {
+            throw new Error("You are not authorized");
+        }
+        // verify token
+        let verifiedUser = null;
+        verifiedUser = jwt_1.jwtHelpers.verifyToken(token, process.env.JWT_SECRET);
+        req.user = verifiedUser; // role  , userid
+        // role diye guard korar jnno
+        if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
+            throw new Error("Forbidden");
+        }
+        next();
     }
     catch (error) {
-        console.log("Error starting server");
+        next(error);
     }
 });
-main();
+exports.default = auth;

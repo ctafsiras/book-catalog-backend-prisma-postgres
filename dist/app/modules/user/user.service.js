@@ -13,12 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
+const jwt_1 = require("../../../shared/jwt");
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const create = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield prisma_1.default.user.create({
         data,
     });
     return user;
+});
+const login = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma_1.default.user.findUnique({
+        where: {
+            email: data.email,
+            password: data.password,
+        },
+    });
+    if (!user) {
+        new Error("User not found");
+    }
+    const payload = {
+        role: user === null || user === void 0 ? void 0 : user.role,
+        userId: user === null || user === void 0 ? void 0 : user.id,
+    };
+    const secret = process.env.JWT_SECRET;
+    const token = jwt_1.jwtHelpers.createToken(payload, secret, "365d");
+    return token;
 });
 const getAll = () => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield prisma_1.default.user.findMany();
@@ -54,6 +73,7 @@ const remove = (id) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.UserService = {
     create,
+    login,
     getAll,
     getOne,
     update,

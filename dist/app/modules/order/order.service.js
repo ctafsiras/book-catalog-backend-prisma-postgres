@@ -14,17 +14,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
+const client_1 = require("@prisma/client");
 const create = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const order = yield prisma_1.default.order.create({
         data,
     });
     return order;
 });
-const getAll = () => __awaiter(void 0, void 0, void 0, function* () {
-    const orders = yield prisma_1.default.order.findMany({});
+const getAll = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    let orders;
+    if (user.role === client_1.UserRole.admin) {
+        orders = yield prisma_1.default.order.findMany({});
+        return orders;
+    }
+    else {
+        orders = yield prisma_1.default.order.findMany({
+            where: {
+                userId: user.id,
+            },
+        });
+    }
     return orders;
 });
-const getOne = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const getOne = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
     const order = yield prisma_1.default.order.findUnique({
         where: {
             id,
@@ -32,6 +44,9 @@ const getOne = (id) => __awaiter(void 0, void 0, void 0, function* () {
     });
     if (!order) {
         throw new Error("Order not found");
+    }
+    if (user.role !== client_1.UserRole.admin && order.userId !== user.id) {
+        throw new Error("You are not authorized to see this order");
     }
     return order;
 });
