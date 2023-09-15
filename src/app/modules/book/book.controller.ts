@@ -1,57 +1,57 @@
 import catchAsync from "../../../shared/catchAsync";
-import { UserService } from "./user.service";
+import { BookService } from "./book.service";
 
 const create = catchAsync(async (req, res) => {
-  const user = await UserService.create(req.body);
+  const book = await BookService.create(req.body);
   res.status(201).json({
     success: true,
     statusCode: 201,
-    message: "User created successfully",
-    data: user,
+    message: "Book created successfully",
+    data: book,
   });
 });
 
 const getAll = catchAsync(async (req, res) => {
-  const users = await UserService.getAll();
+  const books = await BookService.getAll();
   res.status(200).json({
     success: true,
     statusCode: 200,
-    message: "Users retrieved successfully",
-    data: users,
+    message: "Books retrieved successfully",
+    data: books,
   });
 });
 
 const getOne = catchAsync(async (req, res) => {
-  const user = await UserService.getOne(req.params.id);
+  const book = await BookService.getOne(req.params.id);
   res.status(200).json({
     success: true,
     statusCode: 200,
-    message: "User retrieved successfully",
-    data: user,
+    message: "Book retrieved successfully",
+    data: book,
   });
 });
 
 const update = catchAsync(async (req, res) => {
-  const user = await UserService.update(req.params.id, req.body);
+  const book = await BookService.update(req.params.id, req.body);
   res.status(200).json({
     success: true,
     statusCode: 200,
-    message: "User updated successfully",
-    data: user,
+    message: "Book updated successfully",
+    data: book,
   });
 });
 
 const remove = catchAsync(async (req, res) => {
-  const user = await UserService.remove(req.params.id);
+  const book = await BookService.remove(req.params.id);
   res.status(200).json({
     success: true,
     statusCode: 200,
-    message: "User deleted successfully",
-    data: user,
+    message: "Book deleted successfully",
+    data: book,
   });
 });
 
-export const UserController = {
+export const BookController = {
   create,
   getAll,
   getOne,
