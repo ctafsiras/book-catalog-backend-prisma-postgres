@@ -1,8 +1,14 @@
 import prisma from "../../../shared/prisma";
 import { Book } from "@prisma/client";
+import {
+  IAllBooks,
+  IFilterOptions,
+  IPaginationOptions,
+} from "./book.interface";
+import { paginationHelpers } from "../../../shared/pagination";
+import { bookSearchableFields } from "./book.constant";
 
 const create = async (data: Book): Promise<Book> => {
-  data.publicationDate = new Date(data.publicationDate);
   const book = await prisma.book.create({
     data,
     include: {
@@ -12,13 +18,97 @@ const create = async (data: Book): Promise<Book> => {
   return book;
 };
 
-const getAll = async (): Promise<Book[]> => {
+const getAll = async (
+  filterOptions: IFilterOptions,
+  paginationOptions: IPaginationOptions
+): Promise<IAllBooks> => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginationOptions);
+  const { search, ...filtersData } = filterOptions;
+  const whereCondition = {};
+  if (search) {
+    Object.assign(whereCondition, {
+      OR: bookSearchableFields.map((field) => ({
+        [field]: { contains: search, mode: "insensitive" },
+      })),
+    });
+  }
+  if (Object.keys(filtersData).length) {
+    Object.assign(whereCondition, {
+      AND: Object.keys(filtersData).map((key) => ({
+        [key]: { contains: (filtersData as any)[key], mode: "insensitive" },
+      })),
+    });
+  }
   const books = await prisma.book.findMany({
     include: {
       category: true,
     },
+    skip,
+    take: limit,
+    where: whereCondition,
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
   });
-  return books;
+  const total = await prisma.book.count();
+
+  return {
+    data: books,
+    meta: {
+      page,
+      size: limit,
+      total,
+      totalPage: Math.ceil(total / limit),
+    },
+  };
+};
+
+const getAllByCategory = async (
+  categoryId: string,
+  filterOptions: IFilterOptions,
+  paginationOptions: IPaginationOptions
+): Promise<IAllBooks> => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginationOptions);
+  const { search, ...filtersData } = filterOptions;
+  const whereCondition = { categoryId };
+  if (search) {
+    Object.assign(whereCondition, {
+      OR: bookSearchableFields.map((field) => ({
+        [field]: { contains: search, mode: "insensitive" },
+      })),
+    });
+  }
+  if (Object.keys(filtersData).length) {
+    Object.assign(whereCondition, {
+      AND: Object.keys(filtersData).map((key) => ({
+        [key]: { contains: (filtersData as any)[key], mode: "insensitive" },
+      })),
+    });
+  }
+  const books = await prisma.book.findMany({
+    include: {
+      category: true,
+    },
+    skip,
+    take: limit,
+    where: whereCondition,
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+  });
+  const total = await prisma.book.count();
+
+  return {
+    data: books,
+    meta: {
+      page,
+      size: limit,
+      total,
+      totalPage: Math.ceil(total / limit),
+    },
+  };
 };
 
 const getOne = async (id: string): Promise<Book> => {
@@ -55,6 +145,7 @@ const remove = async (id: string): Promise<Book> => {
 export const BookService = {
   create,
   getAll,
+  getAllByCategory,
   getOne,
   update,
   remove,

@@ -11,6 +11,15 @@ const create = catchAsync(async (req, res) => {
   });
 });
 
+const login = catchAsync(async (req, res) => {
+  const token = await UserService.login(req.body);
+  res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: "User logged in successfully",
+    token,
+  });
+});
 const getAll = catchAsync(async (req, res) => {
   const users = await UserService.getAll();
   res.status(200).json({
@@ -51,10 +60,22 @@ const remove = catchAsync(async (req, res) => {
   });
 });
 
+const getProfile = catchAsync(async (req: any, res) => {
+  const user = await UserService.getOne(req.user.userId);
+  res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: "User retrieved successfully",
+    data: user,
+  });
+});
+
 export const UserController = {
   create,
+  login,
   getAll,
   getOne,
   update,
   remove,
+  getProfile,
 };

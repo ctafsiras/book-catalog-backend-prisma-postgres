@@ -1,5 +1,5 @@
 import prisma from "../../../shared/prisma";
-import { Order } from "@prisma/client";
+import { Order, UserRole } from "@prisma/client";
 
 const create = async (data: any): Promise<Order> => {
   const order = await prisma.order.create({
@@ -8,12 +8,22 @@ const create = async (data: any): Promise<Order> => {
   return order;
 };
 
-const getAll = async (): Promise<Order[]> => {
-  const orders = await prisma.order.findMany({});
+const getAll = async (user: any): Promise<Order[]> => {
+  let orders;
+  if (user.role === UserRole.admin) {
+    orders = await prisma.order.findMany({});
+    return orders;
+  } else {
+    orders = await prisma.order.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+  }
   return orders;
 };
 
-const getOne = async (id: string): Promise<Order> => {
+const getOne = async (id: string, user: any): Promise<Order> => {
   const order = await prisma.order.findUnique({
     where: {
       id,
@@ -21,6 +31,9 @@ const getOne = async (id: string): Promise<Order> => {
   });
   if (!order) {
     throw new Error("Order not found");
+  }
+  if (user.role !== UserRole.admin && order.userId !== user.id) {
+    throw new Error("You are not authorized to see this order");
   }
   return order;
 };

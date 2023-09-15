@@ -11,8 +11,8 @@ const create = catchAsync(async (req, res) => {
   });
 });
 
-const getAll = catchAsync(async (req, res) => {
-  const orders = await OrderService.getAll();
+const getAll = catchAsync(async (req: any, res) => {
+  const orders = await OrderService.getAll(req.user);
   res.status(200).json({
     success: true,
     statusCode: 200,
@@ -21,8 +21,8 @@ const getAll = catchAsync(async (req, res) => {
   });
 });
 
-const getOne = catchAsync(async (req, res) => {
-  const order = await OrderService.getOne(req.params.id);
+const getOne = catchAsync(async (req: any, res) => {
+  const order = await OrderService.getOne(req.params.id, req.user);
   res.status(200).json({
     success: true,
     statusCode: 200,

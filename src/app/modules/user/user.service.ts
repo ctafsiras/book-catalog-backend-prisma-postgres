@@ -1,3 +1,4 @@
+import { jwtHelpers } from "../../../shared/jwt";
 import prisma from "../../../shared/prisma";
 import { User } from "@prisma/client";
 
@@ -6,6 +7,25 @@ const create = async (data: User): Promise<User> => {
     data,
   });
   return user;
+};
+
+const login = async (data: Partial<User>): Promise<string | null> => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: data.email,
+      password: data.password,
+    },
+  });
+  if (!user) {
+    new Error("User not found");
+  }
+  const payload = {
+    role: user?.role,
+    userId: user?.id,
+  };
+  const secret = process.env.JWT_SECRET as string;
+  const token = jwtHelpers.createToken(payload, secret, "365d");
+  return token;
 };
 
 const getAll = async (): Promise<User[]> => {
@@ -46,6 +66,7 @@ const remove = async (id: string): Promise<User> => {
 
 export const UserService = {
   create,
+  login,
   getAll,
   getOne,
   update,

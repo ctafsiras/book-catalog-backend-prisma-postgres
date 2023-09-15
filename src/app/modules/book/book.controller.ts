@@ -1,4 +1,7 @@
 import catchAsync from "../../../shared/catchAsync";
+import { paginationHelpers } from "../../../shared/pagination";
+import pick from "../../../shared/pick";
+import { bookFilterableFields } from "./book.constant";
 import { BookService } from "./book.service";
 
 const create = catchAsync(async (req, res) => {
@@ -12,12 +15,28 @@ const create = catchAsync(async (req, res) => {
 });
 
 const getAll = catchAsync(async (req, res) => {
-  const books = await BookService.getAll();
+  const filterOptions = pick(req.query, bookFilterableFields);
+  const paginationOptions = pick(req.query, paginationHelpers.paginationFields);
+  const books = await BookService.getAll(filterOptions, paginationOptions);
   res.status(200).json({
     success: true,
     statusCode: 200,
     message: "Books retrieved successfully",
-    data: books,
+    meta: books.meta,
+    data: books.data,
+  });
+});
+const getAllByCategory = catchAsync(async (req, res) => {
+  const categoryId = req.params.categoryId;
+  const filterOptions = pick(req.query, bookFilterableFields);
+  const paginationOptions = pick(req.query, paginationHelpers.paginationFields);
+  const books = await BookService.getAllByCategory(categoryId, filterOptions, paginationOptions);
+  res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: "Books retrieved successfully",
+    meta: books.meta,
+    data: books.data,
   });
 });
 
@@ -54,6 +73,7 @@ const remove = catchAsync(async (req, res) => {
 export const BookController = {
   create,
   getAll,
+  getAllByCategory,
   getOne,
   update,
   remove,
