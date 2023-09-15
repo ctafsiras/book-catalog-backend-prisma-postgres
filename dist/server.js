@@ -17,7 +17,7 @@ const port = Number(process.env.PORT) | 5000;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         app_1.default.listen(port, () => {
-            console.log(`Example app listening on port ${port}`);
+            console.log(`Example app listening 3on port ${port}`);
         });
     }
     catch (error) {

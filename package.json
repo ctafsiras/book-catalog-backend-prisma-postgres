@@ -9,7 +9,7 @@
     "start": "tsc && node dist/server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Chowdhury Tafsir Ahmed Siddiki",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.3.0",
@@ -23,7 +23,6 @@
     "@types/node": "^20.6.0",
     "prisma": "^5.3.0",
     "ts-node": "^10.9.1",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
   }
 }
