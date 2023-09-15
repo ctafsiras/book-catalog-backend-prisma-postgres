@@ -11,6 +11,50 @@ const create = catchAsync(async (req, res) => {
   });
 });
 
+const getAll = catchAsync(async (req, res) => {
+  const users = await UserService.getAll();
+  res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: "Users retrieved successfully",
+    data: users,
+  });
+});
+
+const getOne = catchAsync(async (req, res) => {
+  const user = await UserService.getOne(req.params.id);
+  res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: "User retrieved successfully",
+    data: user,
+  });
+});
+
+const update = catchAsync(async (req, res) => {
+  const user = await UserService.update(req.params.id, req.body);
+  res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: "User updated successfully",
+    data: user,
+  });
+});
+
+const remove = catchAsync(async (req, res) => {
+  const user = await UserService.remove(req.params.id);
+  res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: "User deleted successfully",
+    data: user,
+  });
+});
+
 export const UserController = {
   create,
+  getAll,
+  getOne,
+  update,
+  remove,
 };
