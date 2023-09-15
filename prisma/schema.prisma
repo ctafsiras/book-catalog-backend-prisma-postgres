@@ -12,8 +12,6 @@ datasource db {
 
 model User {
   id               String            @id @default(uuid())
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
   name             String
   email            String            @unique
   password         String
@@ -33,19 +31,15 @@ enum UserRole {
 }
 
 model Category {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  books     Book[]
+  id    String @id @default(uuid())
+  title String
+  books Book[]
 
   @@map("categories")
 }
 
 model Book {
   id               String            @id @default(uuid())
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
   title            String
   author           String
   price            Float
@@ -59,15 +53,13 @@ model Book {
 }
 
 model ReviewAndRating {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  rating    Int
-  review    String
-  bookId    String
-  book      Book     @relation(fields: [bookId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  id     String @id @default(uuid())
+  rating Int
+  review String
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
   @@map("review_and_ratings")
 }
@@ -75,17 +67,16 @@ model ReviewAndRating {
 model Order {
   id           String      @id @default(uuid())
   createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
   userId       String
   user         User        @relation(fields: [userId], references: [id])
   orderedBooks Json
-  status       OrderStatus @default(PENDING)
+  status       OrderStatus @default(pending)
 
   @@map("orders")
 }
 
 enum OrderStatus {
-  PENDING
-  SHIPPED
-  DELIVERED
+  pending
+  shipped
+  delivered
 }
