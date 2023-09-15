@@ -16,4 +16,8 @@ app.use("/api/v1/categories", CategoryRoute);
 app.use("/api/v1/books", BookRoute);
 app.use("/api/v1/orders", OrderRoute);
 
+app.get("/", (req: Request, res: Response) => {
+  res.send("Welcome to the Bookstore API");
+});
+
 export default app;
