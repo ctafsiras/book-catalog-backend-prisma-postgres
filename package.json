@@ -1,5 +1,5 @@
 {
-  "name": "book-catalog-backend",
+  "name": "book-catalog-backend-prisma-postgres",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
