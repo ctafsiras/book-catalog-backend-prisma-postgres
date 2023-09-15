@@ -28,8 +28,8 @@ model User {
 }
 
 enum UserRole {
-  ADMIN
-  CUSTOMER
+  admin
+  customer
 }
 
 model Category {
